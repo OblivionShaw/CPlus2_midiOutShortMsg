@@ -29,6 +29,7 @@ enum Voice
 
 void OdeToJoy(int speed)
 {
+
     HMIDIOUT handle;
     midiOutOpen(&handle, 0, 0, 0, CALLBACK_NULL);
     int volume = 0x7f;
@@ -40,7 +41,6 @@ void OdeToJoy(int speed)
         M3, M3, M4, M5,      M5, M4, M3, M2,      M1, M1, M2, M3,      M2, M1, M1, 175,
         M2, M2, M3, M1,      M2,999175,M3,M4,M3,99975,999350,M1, M2,999175,M3, M4, M3,99975,999350,M2,      M1, M2, L5, 175,
         M3, M3, M4, M5,      M5, M4, M3, M2,      M1, M1, M2, M3,      M2, M1, M1,
-
     };
 
     for (auto i : sheetmusic)
@@ -76,12 +76,58 @@ void OdeToJoy(int speed)
     midiOutClose(handle);
 }
 
+void play()
+{
+    HMIDIOUT handle;
+    midiOutOpen(&handle, 0, 0, 0, CALLBACK_NULL);
+    int volume = 0x7f;
+    int voice = 0x0;
 
-
+    char ch;
+    while (1) {
+        if (_kbhit()) { // 如果有鍵盤輸入
+            ch = _getch(); // 獲取鍵盤輸入
+            switch (ch) 
+            {
+            case '1': // 數字鍵1
+                OdeToJoy(350);
+                break;
+            case '2': // 數字鍵2.
+                return; // 強制中斷
+            case 'a': // Do
+                voice = (volume << 16) + (C4 << 8) + 0x90;
+                break;
+            case 's': // Re
+                voice = (volume << 16) + (D4 << 8) + 0x90;
+                break;
+            case 'd': // Mi
+                voice = (volume << 16) + (E4 << 8) + 0x90;
+                break;
+            case 'f': // Fa
+                voice = (volume << 16) + (F4 << 8) + 0x90;
+                break;
+            case 'g': // Sol
+                voice = (volume << 16) + (G4 << 8) + 0x90;
+                break;
+            case 'h': // La
+                voice = (volume << 16) + (A4 << 8) + 0x90;
+                break;
+            case 'j': // Si
+                voice = (volume << 16) + (B4 << 8) + 0x90;
+                break;
+            case 8: // BACKSPACE的ASCII值是8
+                return;
+            }
+            midiOutShortMsg(handle, voice);
+            cout << voice << endl;
+        }
+    }
+}
 int main()
 {
-    OdeToJoy(350);
-    return 0;
+    play();
+    //OdeToJoy(350);
+    //return 0;
 }
 // 執行程式: Ctrl + F5 或 [偵錯] > [啟動但不偵錯] 功能表
 // 偵錯程式: F5 或 [偵錯] > [啟動偵錯] 功能表
